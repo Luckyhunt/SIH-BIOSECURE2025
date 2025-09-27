@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Upload } from 'lucide-react';
-import LanguageSelector from '../components/LanguageSelector';
 
 const FarmerRegistration = () => {
   const navigate = useNavigate();
@@ -58,7 +57,14 @@ const FarmerRegistration = () => {
     navigate(-1); // Go back to previous page
   };
 
-  
+  // Add error boundary to catch any rendering issues
+  try {
+    console.log('FarmerRegistration component rendering...');
+  } catch (error) {
+    console.error('Error in FarmerRegistration:', error);
+    return <div className="p-4 text-red-500">Error loading page: {error.message}</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -75,11 +81,13 @@ const FarmerRegistration = () => {
             <h1 className="text-lg font-semibold">Farmer Registration</h1>
           </div>
           <div className="relative">
-            <LanguageSelector 
-              variant="compact" 
-              position="inline" 
-              className="bg-white/10 border-white/20 text-white hover:bg-white/20 focus:ring-white/50"
-            />
+            <select className="bg-white/10 border border-white/20 text-white rounded-lg px-3 py-1.5 text-sm hover:bg-white/20 focus:ring-white/50">
+              <option value="en">English</option>
+              <option value="hi">हिंदी</option>
+              <option value="mr">मराठी</option>
+              <option value="gu">ગુજરાતી</option>
+              <option value="ta">தமிழ்</option>
+            </select>
           </div>
         </div>
       </header>
