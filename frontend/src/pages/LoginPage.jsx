@@ -99,6 +99,12 @@ if (role === 'admin' && adminType === 'government') {
   if (role === 'admin' && adminType === 'government') {
     return (
       <div className='min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col'>
+        {/* Language Selector in Top Right */}
+        <LanguageSelector 
+          variant="compact" 
+          position="top-right"
+          className="bg-white/90 border-gray-200 text-gray-700 hover:bg-white"
+        />
         <div className='flex-1 flex items-center justify-center p-4'>
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -205,20 +211,18 @@ if (role === 'admin' && adminType === 'government') {
                 </button>
               </div>
             </form>
+            
+            {/* Demo Credentials */}
+            <div className='mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg'>
+              <h4 className='text-sm font-medium text-blue-800 mb-2'>Demo Credentials:</h4>
+              <div className='text-xs text-blue-700 space-y-1'>
+                <p><strong>Username:</strong> user123</p>
+                <p><strong>Password:</strong> 123</p>
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
-        
-        {/* Language Selector in Footer */}
-        <div className='bg-white border-t border-gray-200 px-4 py-3'>
-          <div className='max-w-md mx-auto flex items-center justify-center'>
-            <LanguageSelector 
-              variant="compact" 
-              position="inline"
-              className="bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
-            />
-          </div>
-        </div>
       </div>
     );
   }
@@ -277,6 +281,12 @@ if (role === 'admin' && adminType === 'government') {
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col'>
+      {/* Language Selector in Top Right */}
+      <LanguageSelector 
+        variant="compact" 
+        position="top-right"
+        className="bg-white/90 border-gray-200 text-gray-700 hover:bg-white"
+      />
       <div className='flex-1 flex items-center justify-center p-4'>
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -426,20 +436,18 @@ if (role === 'admin' && adminType === 'government') {
                 Back to password login
               </button>
             )}
+            
+            {/* Demo Credentials */}
+            <div className='mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg'>
+              <h4 className='text-sm font-medium text-blue-800 mb-2'>Demo Credentials:</h4>
+              <div className='text-xs text-blue-700 space-y-1'>
+                <p><strong>Username:</strong> user123</p>
+                <p><strong>Password:</strong> 123</p>
+              </div>
+            </div>
           </div>
         </div>
         </motion.div>
-      </div>
-
-      {/* Language Selector in Footer */}
-      <div className='bg-white border-t border-gray-200 px-4 py-3'>
-        <div className='max-w-md mx-auto flex items-center justify-center'>
-          <LanguageSelector 
-            variant="compact" 
-            position="inline"
-            className="bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
-          />
-        </div>
       </div>
 
       {/* Support & Helpline - Mobile First */}

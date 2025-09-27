@@ -54,6 +54,12 @@ const LandingPage = () => {
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50'>
+      {/* Language Selector in Top Right */}
+      <LanguageSelector 
+        variant="compact" 
+        position="top-right"
+        className="bg-white/90 border-gray-200 text-gray-700 hover:bg-white"
+      />
       <div className='relative overflow-hidden'>
         <div className='relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16'>
           <motion.div
@@ -225,24 +231,10 @@ const LandingPage = () => {
             </div>
           </div>
 
-          {/* Copyright & Language Selector */}
-          <div className='border-t border-gray-700 mt-6 pt-4'>
-            <div className='flex flex-col items-center justify-center space-y-4'>
-              {/* Language Selector */}
-              <div className='flex items-center justify-center'>
-                <LanguageSelector 
-                  variant="compact" 
-                  position="inline"
-                  className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
-                />
-              </div>
-              
-              {/* Copyright */}
-              <div className='text-center text-sm opacity-70'>
-                <p>© 2024 Digital Farm & Biosecurity Management Platform</p>
-                <p className='mt-1'>Ministry of Agriculture & Farmers Welfare</p>
-              </div>
-            </div>
+          {/* Copyright */}
+          <div className='text-center text-sm opacity-70'>
+            <p>© 2024 Digital Farm & Biosecurity Management Platform</p>
+            <p className='mt-1'>Ministry of Agriculture & Farmers Welfare</p>
           </div>
         </div>
       </footer>
