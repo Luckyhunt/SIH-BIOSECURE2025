@@ -180,7 +180,7 @@ const VetScanFarmQR = () => {
             </div>
 
             {/* Camera Controls */}
-            <div className="flex justify-center gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
               <button
                 type="button"
                 onClick={toggleCamera}
@@ -193,7 +193,7 @@ const VetScanFarmQR = () => {
                 <button
                   type="button"
                   onClick={startCamera}
-                  className="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg flex items-center gap-2 transition-colors"
+                  className="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg flex items-center gap-2 transition-colors min-w-[140px] justify-center"
                 >
                   <Camera className="h-5 w-5" />
                   Open Camera
@@ -202,7 +202,7 @@ const VetScanFarmQR = () => {
                 <button
                   type="button"
                   onClick={stopCamera}
-                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center gap-2 transition-colors"
+                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center gap-2 transition-colors min-w-[140px] justify-center"
                 >
                   <Camera className="h-5 w-5" />
                   Close Camera

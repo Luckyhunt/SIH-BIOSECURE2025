@@ -164,17 +164,17 @@ const ScanFarmQR = () => {
           </div>
           <p className="text-sm text-gray-500 mt-1">Point your camera at the farm QR to check in</p>
 
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-col sm:flex-row flex-wrap gap-2">
             {!active ? (
-              <button onClick={startCamera} className="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 inline-flex items-center gap-2">
+              <button onClick={startCamera} className="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 inline-flex items-center justify-center gap-2">
                 <Camera className="h-4 w-4" /> Open Camera
               </button>
             ) : (
-              <button onClick={stopCamera} className="px-4 py-2 rounded-lg bg-gray-100 border hover:bg-gray-50 inline-flex items-center gap-2">
+              <button onClick={stopCamera} className="px-4 py-2 rounded-lg bg-gray-100 border hover:bg-gray-50 inline-flex items-center justify-center gap-2">
                 <CameraOff className="h-4 w-4" /> Stop
               </button>
             )}
-            <button onClick={handleSwitchCamera} className="px-4 py-2 rounded-lg bg-white border hover:bg-gray-50 inline-flex items-center gap-2">
+            <button onClick={handleSwitchCamera} className="px-4 py-2 rounded-lg bg-white border hover:bg-gray-50 inline-flex items-center justify-center gap-2">
               <RefreshCw className="h-4 w-4" /> Switch Camera
             </button>
           </div>
@@ -201,10 +201,10 @@ const ScanFarmQR = () => {
           <div className="bg-white rounded-xl shadow-sm p-4 border space-y-3">
             <div className="text-sm text-gray-500">Decoded Text</div>
             <div className="font-mono text-gray-900 break-all">{result}</div>
-            <div className="flex flex-wrap gap-2">
-              <button onClick={handleGoToFarm} className="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">Go to Farm</button>
-              <button onClick={startCamera} className="px-4 py-2 rounded-lg border bg-white hover:bg-gray-50 inline-flex items-center gap-2">
-                <Camera className="h-4 w-4" /> Open Camera
+            <div className="flex flex-col sm:flex-row flex-wrap gap-2">
+              <button onClick={handleGoToFarm} className="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 flex items-center justify-center">Go to Farm</button>
+              <button onClick={startCamera} className="px-4 py-2 rounded-lg border bg-white hover:bg-gray-50 inline-flex items-center justify-center gap-2">
+                <Camera className="h-4 w-4" /> Scan Again
               </button>
             </div>
           </div>

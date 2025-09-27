@@ -182,7 +182,7 @@ const GovScanFarmQR = () => {
             <canvas ref={canvasRef} className="hidden" />
 
             {active && (
-              <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-4">
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
                 <button
                   onClick={toggleCamera}
                   className="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors"
@@ -207,7 +207,7 @@ const GovScanFarmQR = () => {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             Or enter Farm ID manually
           </h2>
-          <form onSubmit={handleManualSubmit} className="flex space-x-2">
+          <form onSubmit={handleManualSubmit} className="flex flex-col sm:flex-row gap-2">
             <input
               type="text"
               value={manualId}
@@ -217,7 +217,7 @@ const GovScanFarmQR = () => {
             />
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 min-w-[120px]"
             >
               <Search className="h-5 w-5" />
               <span>Search</span>
