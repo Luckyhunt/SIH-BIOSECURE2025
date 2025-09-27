@@ -16,29 +16,48 @@ const GovernmentDashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-blue-50">
-      {/* Top Header */}
+      {/* Top Header - THE FIX IS HERE */}
       <header className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 shadow-md">
-        <div className="flex justify-between items-center">
-          <h1 className="text-xl font-bold flex items-center space-x-2">
-            <span className="text-2xl">🚜</span>
-            <span>Government Farm Dashboard</span>
-          </h1>
-          <div className="flex items-center space-x-6">
-            {/* Language Selector */}
-            <div className="relative" data-testid="language-selector-container">
+        {/* Changed this flex container to allow stacking on mobile (flex-col) 
+            while retaining the desktop layout (md:flex-row) */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center max-w-7xl mx-auto">
+          
+          {/* Title and Language Selector Group */}
+          <div className="flex justify-between items-center w-full md:w-auto mb-3 md:mb-0">
+            <h1 className="text-xl font-bold flex items-center space-x-2">
+              <span className="text-2xl">🚜</span>
+              {/* Reduced font size on mobile for better fit */}
+              <span className="text-lg sm:text-xl">Government Farm Dashboard</span> 
+            </h1>
+            {/* Move Language Selector to be next to title on mobile, making space for Logout button */}
+            <div className="relative md:hidden" data-testid="language-selector-container">
               <LanguageSelector 
                 variant="compact" 
                 position="inline" 
                 className="bg-white/10 border-white/20 text-white hover:bg-white/20 focus:ring-white/50"
               />
             </div>
-            <span className="text-sm">Welcome, Admin!</span>
+          </div>
+
+          {/* User Info and Logout Group */}
+          <div className="flex items-center space-x-4 md:space-x-6 justify-between w-full md:w-auto">
+            {/* Language Selector (Desktop View) */}
+            <div className="relative hidden md:block" data-testid="language-selector-container">
+              <LanguageSelector 
+                variant="compact" 
+                position="inline" 
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20 focus:ring-white/50"
+              />
+            </div>
+            {/* Added md:block to hide on mobile and only show on desktop */}
+            <span className="text-sm hidden md:block">Welcome, Admin!</span> 
+            
             <button
               onClick={handleLogout}
-              className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-all"
+              className="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg flex items-center space-x-1 md:space-x-2 transition-all text-sm"
             >
               <LogOut className="h-4 w-4" />
-              <span>Logout</span>
+              <span className="hidden sm:inline">Logout</span> {/* Hide text on smallest phones */}
             </button>
           </div>
         </div>
