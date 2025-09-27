@@ -77,7 +77,7 @@ const AlertCard = ({ alert, type }) => {
         <h4 className="text-lg font-semibold text-gray-900 mb-1">{alert.farmName}</h4>
         <p className="text-gray-700 mb-3">{alert.alert}</p>
         
-        <div className="grid grid-cols-2 gap-4 text-sm mt-4">
+        <div className="grid grid-cols-1 gap-4 text-sm mt-4">
           <div className="flex items-start">
             <MapPin className="w-4 h-4 mt-0.5 mr-2 flex-shrink-0 text-gray-500" />
             <div>
@@ -96,14 +96,16 @@ const AlertCard = ({ alert, type }) => {
         </div>
         
         <div className="mt-4 pt-3 border-t border-gray-200">
-          <div className="flex items-center">
-            <Thermometer className="w-4 h-4 mr-2 text-gray-500" />
-            <span className="text-sm font-medium">{alert.cases}</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center">
+              <Thermometer className="w-4 h-4 mr-2 text-gray-500" />
+              <span className="text-sm font-medium">{alert.cases}</span>
+            </div>
+            <button className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 self-start sm:self-auto">
+              <ShieldAlert className="w-4 h-4 mr-1" />
+              View Biosecurity Recommendations
+            </button>
           </div>
-          <button className="mt-3 flex items-center text-sm font-medium text-blue-600 hover:text-blue-800">
-            <ShieldAlert className="w-4 h-4 mr-1" />
-            View Biosecurity Recommendations
-          </button>
         </div>
       </div>
     </div>

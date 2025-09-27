@@ -121,14 +121,14 @@ const VetAlert = () => {
                     </div>
                   </div>
                   
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between">
+                    <div className="text-sm mb-2 sm:mb-0">
                       <span className="font-medium">12 cases</span>
                       <span className="mx-2 text-gray-300">•</span>
                       <span className="text-amber-600">Mortality: 45%</span>
                     </div>
                     <button 
-                      className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm flex items-center"
+                      className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm flex items-center self-start sm:self-auto"
                       onClick={() => navigate('/vet/action-plan/1')}
                     >
                       <Activity className="h-3 w-3 mr-1" />
@@ -168,14 +168,14 @@ const VetAlert = () => {
                     </div>
                   </div>
                   
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between">
+                    <div className="text-sm mb-2 sm:mb-0">
                       <span className="font-medium">8 cases</span>
                       <span className="mx-2 text-gray-300">•</span>
                       <span className="text-amber-600">Mortality: 30%</span>
                     </div>
                     <button 
-                      className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm flex items-center"
+                      className="text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm flex items-center self-start sm:self-auto"
                       onClick={() => navigate('/vet/action-plan/2')}
                     >
                       <Activity className="h-3 w-3 mr-1" />
@@ -226,14 +226,14 @@ const VetAlert = () => {
                     </div>
                   </div>
                   
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between">
+                    <div className="text-sm mb-2 sm:mb-0">
                       <span className="font-medium">3 cases</span>
                       <span className="mx-2 text-gray-300">•</span>
                       <span className="text-amber-600">Mortality: 5%</span>
                     </div>
                     <button 
-                      className="text-white bg-orange-500 hover:bg-orange-600 px-3 py-1 rounded text-sm flex items-center"
+                      className="text-white bg-orange-500 hover:bg-orange-600 px-3 py-1 rounded text-sm flex items-center self-start sm:self-auto"
                       onClick={() => navigate('/vet/action-plan/3')}
                     >
                       <Activity className="h-3 w-3 mr-1" />
@@ -273,14 +273,14 @@ const VetAlert = () => {
                     </div>
                   </div>
                   
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between">
+                    <div className="text-sm mb-2 sm:mb-0">
                       <span className="font-medium">5 cases</span>
                       <span className="mx-2 text-gray-300">•</span>
                       <span className="text-amber-600">Mortality: 2%</span>
                     </div>
                     <button 
-                      className="text-white bg-orange-500 hover:bg-orange-600 px-3 py-1 rounded text-sm flex items-center"
+                      className="text-white bg-orange-500 hover:bg-orange-600 px-3 py-1 rounded text-sm flex items-center self-start sm:self-auto"
                       onClick={() => navigate('/vet/action-plan/4')}
                     >
                       <Activity className="h-3 w-3 mr-1" />

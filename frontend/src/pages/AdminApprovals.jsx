@@ -32,14 +32,15 @@ const Row = ({ item, status, onView }) => {
     : { cls: 'bg-red-100 text-red-700 border-red-200', Icon: XCircle, text: 'Rejected' }
   const Icon = statusPill.Icon
   return (
-    <div className="flex items-center justify-between bg-gray-50 border rounded-lg px-4 py-3">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-gray-50 border rounded-lg px-4 py-3 gap-2">
       <div>
         <div className="font-medium text-gray-900">{item.farmName}</div>
         <div className="text-xs text-gray-500">
           Owner: {item.owner} • Submitted on: {item.submittedOn}
         </div>
       </div>
-      <div className="flex items-center gap-2">
+      {/* Action/Status Group - This is the key change */}
+      <div className="flex items-center flex-wrap sm:flex-nowrap gap-2">
         <span className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full border ${statusPill.cls}`}>
           <Icon className="h-3.5 w-3.5" /> {statusPill.text}
         </span>

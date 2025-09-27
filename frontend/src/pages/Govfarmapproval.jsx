@@ -117,7 +117,7 @@ const FarmApprovalsPage = () => {
         <div className="space-y-4">
           {filteredApplications.map((app) => (
             <div key={app.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex-1">
                   <h3 className="text-lg font-medium text-gray-900 mb-2">{app.farmName}</h3>
                   <div className="text-sm text-gray-600 space-y-1">
@@ -129,7 +129,7 @@ const FarmApprovalsPage = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center flex-wrap sm:flex-nowrap gap-2">
                   {activeTab === 'pending' && (
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
                       <div className="w-2 h-2 bg-yellow-400 rounded-full mr-2"></div>
