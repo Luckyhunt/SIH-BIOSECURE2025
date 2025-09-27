@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Upload } from 'lucide-react';
+import LanguageSelector from '../components/LanguageSelector';
 
 const FarmerRegistration = () => {
   const navigate = useNavigate();
@@ -67,6 +68,13 @@ const FarmerRegistration = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Language Selector in Top Right */}
+      <LanguageSelector 
+        variant="compact" 
+        position="top-right"
+        className="bg-white/90 border-gray-200 text-gray-700 hover:bg-white"
+      />
+      
       {/* Header */}
       <header className="bg-green-600 text-white">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -205,19 +213,6 @@ const FarmerRegistration = () => {
               </button>
             </div>
           </form>
-        </div>
-      </div>
-      
-      {/* Language Selector Footer */}
-      <div className="bg-white border-t border-gray-200 px-4 py-3">
-        <div className="max-w-2xl mx-auto flex items-center justify-center">
-          <select className="bg-gray-50 border border-gray-200 text-gray-700 rounded-lg px-3 py-1.5 text-sm hover:bg-gray-100 focus:ring-green-500 focus:border-green-500">
-            <option value="en">English</option>
-            <option value="hi">हिंदी</option>
-            <option value="mr">मराठी</option>
-            <option value="gu">ગુજરાતી</option>
-            <option value="ta">தமிழ்</option>
-          </select>
         </div>
       </div>
     </div>
