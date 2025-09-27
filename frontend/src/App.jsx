@@ -45,6 +45,7 @@ function App() {
           
           {/* Farmer Routes */}
           <Route path="/farmer/dashboard" element={<FarmDashboard />} />
+          <Route path="/farmer/register" element={<FarmerRegistration />} />
           <Route path="/farmer/alerts" element={<DiseaseAlerts />} />
           <Route path="/farmer/solutions" element={<FindSolution />} />
           <Route path="/farms" element={<MyFarms />} />
