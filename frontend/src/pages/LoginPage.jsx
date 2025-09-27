@@ -98,19 +98,14 @@ if (role === 'admin' && adminType === 'government') {
   // If it's a government official login, show a simplified login form
   if (role === 'admin' && adminType === 'government') {
     return (
-      <div className='min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4'>
-        {/* Language Selector */}
-        <LanguageSelector 
-          variant="default" 
-          position="top-right"
-          className="bg-white/95 backdrop-blur-sm border-gray-200 shadow-lg"
-        />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className='w-full max-w-md'
-        >
+      <div className='min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col'>
+        <div className='flex-1 flex items-center justify-center p-4'>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className='w-full max-w-md'
+          >
           {/* Header */}
           <div className='bg-green-500 text-white p-6 rounded-t-2xl text-center relative'>
             <button
@@ -213,6 +208,18 @@ if (role === 'admin' && adminType === 'government') {
           </div>
         </motion.div>
       </div>
+        
+        {/* Language Selector in Footer */}
+        <div className='bg-white border-t border-gray-200 px-4 py-3'>
+          <div className='max-w-md mx-auto flex items-center justify-center'>
+            <LanguageSelector 
+              variant="compact" 
+              position="inline"
+              className="bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
+            />
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -269,14 +276,14 @@ if (role === 'admin' && adminType === 'government') {
 }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4'>
-
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className='w-full max-w-md'
-      >
+    <div className='min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col'>
+      <div className='flex-1 flex items-center justify-center p-4'>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className='w-full max-w-md'
+        >
         {/* Header */}
         <div className={`${currentRole.bgColor} text-white p-6 rounded-t-2xl text-center relative`}>
           <button
@@ -421,7 +428,19 @@ if (role === 'admin' && adminType === 'government') {
             )}
           </div>
         </div>
-      </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Language Selector in Footer */}
+      <div className='bg-white border-t border-gray-200 px-4 py-3'>
+        <div className='max-w-md mx-auto flex items-center justify-center'>
+          <LanguageSelector 
+            variant="compact" 
+            position="inline"
+            className="bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
+          />
+        </div>
+      </div>
 
       {/* Support & Helpline - Mobile First */}
       <div className='px-4 py-6 bg-gray-50 border-t'>

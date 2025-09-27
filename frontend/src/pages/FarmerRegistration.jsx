@@ -66,7 +66,7 @@ const FarmerRegistration = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
       <header className="bg-green-600 text-white">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -80,19 +80,10 @@ const FarmerRegistration = () => {
             </button>
             <h1 className="text-lg font-semibold">Farmer Registration</h1>
           </div>
-          <div className="relative">
-            <select className="bg-white/10 border border-white/20 text-white rounded-lg px-3 py-1.5 text-sm hover:bg-white/20 focus:ring-white/50">
-              <option value="en">English</option>
-              <option value="hi">हिंदी</option>
-              <option value="mr">मराठी</option>
-              <option value="gu">ગુજરાતી</option>
-              <option value="ta">தமிழ்</option>
-            </select>
-          </div>
         </div>
       </header>
 
-      <div className="max-w-2xl mx-auto p-6">
+      <div className="flex-1 max-w-2xl mx-auto p-6">
         <div className="bg-white rounded-lg shadow-md p-6">
           <form onSubmit={handleSubmit}>
             {/* Language Selector */}
@@ -214,6 +205,19 @@ const FarmerRegistration = () => {
               </button>
             </div>
           </form>
+        </div>
+      </div>
+      
+      {/* Language Selector Footer */}
+      <div className="bg-white border-t border-gray-200 px-4 py-3">
+        <div className="max-w-2xl mx-auto flex items-center justify-center">
+          <select className="bg-gray-50 border border-gray-200 text-gray-700 rounded-lg px-3 py-1.5 text-sm hover:bg-gray-100 focus:ring-green-500 focus:border-green-500">
+            <option value="en">English</option>
+            <option value="hi">हिंदी</option>
+            <option value="mr">मराठी</option>
+            <option value="gu">ગુજરાતી</option>
+            <option value="ta">தமிழ்</option>
+          </select>
         </div>
       </div>
     </div>
