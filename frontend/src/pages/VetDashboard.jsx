@@ -32,27 +32,41 @@ const VetDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-orange-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => navigate(-1)}
-              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center"
-              aria-label="Go back"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </button>
-            <h1 className="text-xl font-semibold">Veterinarian Dashboard</h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/vet/scan')}
-              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
-            >
-              <QrCode className="h-5 w-5" />
-              <span>Scan Farm</span>
-            </button>
-            <div className="relative">
-              <LanguageSelector variant="compact" position="inline" className="bg-white/10 border-white/20 text-white hover:bg-white/20" />
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+            
+            {/* Title and Language Selector Group */}
+            <div className="flex justify-between items-center w-full md:w-auto mb-3 md:mb-0">
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => navigate(-1)}
+                  className="p-2 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center"
+                  aria-label="Go back"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </button>
+                <h1 className="text-lg sm:text-xl font-semibold">Veterinarian Dashboard</h1>
+              </div>
+              {/* Mobile Language Selector */}
+              <div className="relative md:hidden">
+                <LanguageSelector variant="compact" position="inline" className="bg-white/10 border-white/20 text-white hover:bg-white/20" />
+              </div>
+            </div>
+
+            {/* Action Group */}
+            <div className="flex items-center flex-wrap gap-3 md:gap-4 justify-between w-full md:w-auto">
+              {/* Desktop Language Selector */}
+              <div className="relative hidden md:block">
+                <LanguageSelector variant="compact" position="inline" className="bg-white/10 border-white/20 text-white hover:bg-white/20" />
+              </div>
+              
+              <button
+                onClick={() => navigate('/vet/scan')}
+                className="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors text-sm"
+              >
+                <QrCode className="h-5 w-5" />
+                <span className="hidden sm:inline">Scan Farm</span>
+              </button>
             </div>
           </div>
         </div>

@@ -545,26 +545,40 @@ const FarmDashboard = () => {
     <div className="min-h-screen bg-[#F6FAF6]">
       {/* Header */}
       <header className="bg-[#F6FAF6] border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => navigate(-1)} 
-              className="p-2 rounded-lg bg-white hover:bg-gray-50 border border-gray-200" 
-              aria-label="Back"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </button>
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">Farm Dashboard</h1>
-              <p className="text-xs text-gray-500">Welcome back, John Farmer</p>
+        <div className="max-w-6xl mx-auto px-4 py-4">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+            
+            {/* Title and Status Group */}
+            <div className="flex justify-between items-center w-full md:w-auto mb-3 md:mb-0">
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => navigate(-1)} 
+                  className="p-2 rounded-lg bg-white hover:bg-gray-50 border border-gray-200" 
+                  aria-label="Back"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </button>
+                <div>
+                  <h1 className="text-lg sm:text-xl font-semibold text-gray-900">Farm Dashboard</h1>
+                  <p className="text-xs text-gray-500 hidden sm:block">Welcome back, John Farmer</p>
+                </div>
+              </div>
+              {/* Mobile Language Selector */}
+              <div className="relative md:hidden">
+                <LanguageSelector variant="compact" position="inline" />
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="px-3 py-1 text-xs rounded-full bg-green-100 text-green-700 border border-green-200">
-              All Systems Healthy
-            </span>
-            <div className="relative">
-              <LanguageSelector variant="compact" position="inline" />
+
+            {/* Status and Language Group */}
+            <div className="flex items-center flex-wrap gap-3 justify-between w-full md:w-auto">
+              {/* Desktop Language Selector */}
+              <div className="relative hidden md:block">
+                <LanguageSelector variant="compact" position="inline" />
+              </div>
+              
+              <span className="px-3 py-1 text-xs rounded-full bg-green-100 text-green-700 border border-green-200">
+                All Systems Healthy
+              </span>
             </div>
           </div>
         </div>

@@ -36,7 +36,12 @@ const Dashboard = () => {
   }
 
   const handleLogout = () => {
-    navigate('/')
+    // Clear any stored user data
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userName');
+    // Navigate to landing page
+    navigate('/');
   }
 
   const handleFeatureClick = (e, featureTitle) => {
@@ -116,36 +121,50 @@ const Dashboard = () => {
     {/* Header */}
     <header className={`${currentConfig.bgColor} text-white shadow-lg`}>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='flex justify-between items-center py-4'>
-          <div className='flex items-center space-x-3'>
-            <span className='text-2xl'>{currentConfig.icon}</span>
-            <h1 className='text-xl font-semibold'>{currentConfig.title}</h1>
-          </div>
-          <div className='flex items-center space-x-3'>
-              {/* Language Selector - Compact in Dashboard */}
-              <div className="relative">
-                <LanguageSelector 
-                  variant="compact" 
-                  position="inline"
-                  className="bg-white/10 border-white/20 text-white hover:bg-white/20 focus:ring-white/50"
-                />
-              </div>
-              
-              {/* Welcome Message */}
-              <div className='flex items-center space-x-2 text-white'>
-                <User className='h-5 w-5' />
-                <span className='text-sm'>Welcome!</span>
-              </div>
-              
-              {/* Logout Button */}
-              <button
-                onClick={handleLogout}
-                className='flex items-center space-x-2 bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg transition-colors text-white border border-white/20'
-              >
-                <LogOut className='h-4 w-4' />
-                <span className='text-sm font-medium'>Logout</span>
-              </button>
+        <div className='flex flex-col md:flex-row justify-between items-start md:items-center py-4'>
+          
+          {/* Title and Language Selector Group */}
+          <div className='flex justify-between items-center w-full md:w-auto mb-3 md:mb-0'>
+            <div className='flex items-center space-x-3'>
+              <span className='text-2xl'>{currentConfig.icon}</span>
+              <h1 className='text-lg sm:text-xl font-semibold'>{currentConfig.title}</h1>
             </div>
+            {/* Mobile Language Selector */}
+            <div className="relative md:hidden">
+              <LanguageSelector 
+                variant="compact" 
+                position="inline"
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20 focus:ring-white/50"
+              />
+            </div>
+          </div>
+
+          {/* User Info and Logout Group */}
+          <div className='flex items-center space-x-3 md:space-x-4 justify-between w-full md:w-auto'>
+            {/* Desktop Language Selector */}
+            <div className="relative hidden md:block">
+              <LanguageSelector 
+                variant="compact" 
+                position="inline"
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20 focus:ring-white/50"
+              />
+            </div>
+            
+            {/* Welcome Message */}
+            <div className='flex items-center space-x-2 text-white hidden md:flex'>
+              <User className='h-5 w-5' />
+              <span className='text-sm'>Welcome!</span>
+            </div>
+            
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className='flex items-center space-x-1 md:space-x-2 bg-white/20 hover:bg-white/30 px-3 py-1.5 md:px-3 md:py-2 rounded-lg transition-colors text-white border border-white/20 text-sm'
+            >
+              <LogOut className='h-4 w-4' />
+              <span className='hidden sm:inline font-medium'>Logout</span>
+            </button>
+          </div>
         </div>
       </div>
     </header>
