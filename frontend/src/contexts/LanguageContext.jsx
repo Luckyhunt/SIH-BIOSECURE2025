@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 
 const translations = {
   en: {
@@ -99,7 +99,28 @@ const translations = {
     delete: 'Delete',
     view: 'View',
     add: 'Add',
-    remove: 'Remove'
+    remove: 'Remove',
+    
+    // Farm Details
+    statusHealthy: 'Healthy',
+    statusCaution: 'Caution',
+    editFarm: 'Edit Farm',
+    deleteFarm: 'Delete Farm',
+    manageFarm: 'Manage Farm',
+    contactFarm: 'Contact Farm',
+    adminView: 'Admin View',
+    aboutFarm: 'About the Farm',
+    facilities: 'Facilities',
+    farmPhotos: 'Farm Photos',
+    certifications: 'Certifications',
+    contactInfo: 'Contact Information',
+    location: 'Location',
+    farmNotFound: 'Farm not found',
+    established: 'Established',
+    totalWorkers: 'Total Workers',
+    farmType: 'Farm Type',
+    animalsVaccinated: 'Animals Vaccinated',
+    farmCapacity: 'Farm Capacity'
   },
   hi: {
     // Landing Page
@@ -136,7 +157,28 @@ const translations = {
     delete: 'हटाएं',
     view: 'देखें',
     add: 'जोड़ें',
-    remove: 'हटाएं'
+    remove: 'हटाएं',
+    
+    // Farm Details
+    statusHealthy: 'स्वस्थ',
+    statusCaution: 'सावधानी',
+    editFarm: 'फार्म संपादित करें',
+    deleteFarm: 'फार्म हटाएं',
+    manageFarm: 'फार्म प्रबंधन',
+    contactFarm: 'फार्म से संपर्क करें',
+    adminView: 'एडमिन दृश्य',
+    aboutFarm: 'फार्म के बारे में',
+    facilities: 'सुविधाएं',
+    farmPhotos: 'फार्म की तस्वीरें',
+    certifications: 'प्रमाणपत्र',
+    contactInfo: 'संपर्क जानकारी',
+    location: 'स्थान',
+    farmNotFound: 'फार्म नहीं मिला',
+    established: 'स्थापित',
+    totalWorkers: 'कुल कर्मचारी',
+    farmType: 'फार्म प्रकार',
+    animalsVaccinated: 'पशुओं का टीकाकरण',
+    farmCapacity: 'फार्म क्षमता'
   },
   mr: {
     // Landing Page
@@ -173,7 +215,28 @@ const translations = {
     delete: 'हटवा',
     view: 'पहा',
     add: 'जोडा',
-    remove: 'काढा'
+    remove: 'काढा',
+    
+    // Farm Details
+    statusHealthy: 'निरोगी',
+    statusCaution: 'सावधगिरी',
+    editFarm: 'शेत संपादित करा',
+    deleteFarm: 'शेत हटवा',
+    manageFarm: 'शेत व्यवस्थापन',
+    contactFarm: 'शेताशी संपर्क साधा',
+    adminView: 'प्रशासक दृश्य',
+    aboutFarm: 'शेताबद्दल',
+    facilities: 'सुविधा',
+    farmPhotos: 'शेतातील फोटो',
+    certifications: 'प्रमाणपत्रे',
+    contactInfo: 'संपर्क माहिती',
+    location: 'स्थान',
+    farmNotFound: 'शेत सापडले नाही',
+    established: 'स्थापना',
+    totalWorkers: 'एकूण कामगार',
+    farmType: 'शेताचा प्रकार',
+    animalsVaccinated: 'प्राण्यांचे लसीकरण',
+    farmCapacity: 'शेताची क्षमता'
   },
   gu: {
     // Landing Page
@@ -210,7 +273,28 @@ const translations = {
     delete: 'કાઢી નાખો',
     view: 'જુઓ',
     add: 'ઉમેરો',
-    remove: 'દૂર કરો'
+    remove: 'દૂર કરો',
+    
+    // Farm Details
+    statusHealthy: 'તંદુરસ્ત',
+    statusCaution: 'સાવધાની',
+    editFarm: 'ફાર્મ સંપાદિત કરો',
+    deleteFarm: 'ફાર્મ કાઢી નાખો',
+    manageFarm: 'ફાર્મ મેનેજમેન્ટ',
+    contactFarm: 'ફાર્મનો સંપર્ક કરો',
+    adminView: 'એડમિન વ્યૂ',
+    aboutFarm: 'ફાર્મ વિશે',
+    facilities: 'સુવિધાઓ',
+    farmPhotos: 'ફાર્મના ફોટો',
+    certifications: 'પ્રમાણપત્રો',
+    contactInfo: 'સંપર્ક માહિતી',
+    location: 'સ્થાન',
+    farmNotFound: 'ફાર્મ મળ્યું નથી',
+    established: 'સ્થાપના',
+    totalWorkers: 'કુલ નોકરો',
+    farmType: 'ફાર્મનો પ્રકાર',
+    animalsVaccinated: 'પ્રાણીઓનું લસીકરણ',
+    farmCapacity: 'ફાર્મની ક્ષમતા'
   },
   ta: {
     // Landing Page
@@ -223,7 +307,7 @@ const translations = {
     admin: 'நிர்வாகி',
     farmer: 'விவசாயி',
     visitor: 'பார்வையாளர்',
-    adminDesc: 'பண்ணைகள், ஒப்புதல்கள் மற்றும் அறிக்கைகளை நிர்வகிக்கவும்',
+    adminDesc: 'பண்ணைகள், ஒப்புதல்கள் மற்றும் அறிக்கைகளை நிர்வாகிக்கவும்',
     farmerDesc: 'பணிகள், எச்சரிக்கைகள் மற்றும் பயிற்சி தொகுதிகள்',
     visitorDesc: 'பண்ணை மேலாண்மையைப் பற்றி அறியுங்கள்',
     
@@ -247,7 +331,28 @@ const translations = {
     delete: 'நீக்கு',
     view: 'பார்',
     add: 'சேர்',
-    remove: 'நீக்கு'
+    remove: 'நீக்கு',
+    
+    // Farm Details
+    statusHealthy: 'ஆரோக்கியமான',
+    statusCaution: 'எச்சரிக்கை',
+    editFarm: 'பண்ணையைத் திருத்து',
+    deleteFarm: 'பண்ணையை நீக்கு',
+    manageFarm: 'பண்ணை மேலாண்மை',
+    contactFarm: 'பண்ணையைத் தொடர்பு கொள்ளுங்கள்',
+    adminView: 'நிர்வாக காட்சி',
+    aboutFarm: 'பண்ணையைப் பற்றி',
+    facilities: 'வசதிகள்',
+    farmPhotos: 'பண்ணை புகைப்படங்கள்',
+    certifications: 'சான்றிதழ்கள்',
+    contactInfo: 'தொடர்பு தகவல்',
+    location: 'இடம்',
+    farmNotFound: 'பண்ணை காணவில்லை',
+    established: 'நிறுவப்பட்டது',
+    totalWorkers: 'முழு தொழிலாளர்கள்',
+    farmType: 'பண்ணை வகை',
+    animalsVaccinated: 'விலங்குகளின் துவாக்குத்தீகபு',
+    farmCapacity: 'பண்ணை திறன்'
   }
 }
 
@@ -256,7 +361,28 @@ const LanguageContext = createContext()
 
 // Provider component
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState('en')
+  // Helper to get initial language from URL hash (similar to LanguageSelector)
+  const getInitialLanguage = () => {
+    const hashMatch = window.location.hash.match(/googtrans\(.{2}\|(\w{2})\)/) || 
+                     window.location.hash.match(/googtrans\(\/\w{2}\/(\w{2})\)/)
+    const lang = hashMatch ? hashMatch[1] : 'en'
+    return lang === 'und' || lang === 'en|en' ? 'en' : lang
+  }
+
+  const [language, setLanguage] = useState(getInitialLanguage)
+
+  // Listen for hash changes to sync with Google Translate
+  useEffect(() => {
+    const handleHashChange = () => {
+      const newLang = getInitialLanguage()
+      if (newLang !== language) {
+        setLanguage(newLang)
+      }
+    }
+
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [language])
 
   const t = (key) => {
     return translations[language]?.[key] || key

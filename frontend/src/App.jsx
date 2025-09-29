@@ -49,6 +49,7 @@ function App() {
           <Route path="/farmer/alerts" element={<DiseaseAlerts />} />
           <Route path="/farmer/solutions" element={<FindSolution />} />
           <Route path="/farms" element={<MyFarms />} />
+          <Route path="/farms/:id" element={<FarmDashboard />} />
           <Route path="/farm-dashboard" element={<FarmDashboard />} />
           <Route path="/farm-details/:id" element={<FarmDetails />} />
           

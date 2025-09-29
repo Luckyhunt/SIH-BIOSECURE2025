@@ -129,7 +129,7 @@ const FarmDetails = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-semibold text-gray-800">Farm not found</h2>
+          <h2 className="text-2xl font-semibold text-gray-800">{t('farmNotFound') || 'Farm not found'}</h2>
           <div className="mt-6 flex flex-wrap gap-3">
             {isAdmin ? (
               <>
@@ -240,7 +240,7 @@ const FarmDetails = () => {
           <div className="lg:col-span-2 space-y-6">
             {/* About Farm */}
             <section className="bg-white rounded-xl shadow-sm p-6 border">
-              <h3 className="text-lg font-semibold mb-4">About the Farm</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('aboutFarm') || 'About the Farm'}</h3>
               <p className="text-gray-700 mb-4">{farm.description}</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                 <div className="flex items-start">
@@ -248,7 +248,7 @@ const FarmDetails = () => {
                     <Calendar className="h-5 w-5 text-purple-600" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500">Established</h4>
+                    <h4 className="text-sm font-medium text-gray-500">{t('established') || 'Established'}</h4>
                     <p className="font-medium">{farm.established}</p>
                   </div>
                 </div>
@@ -257,7 +257,7 @@ const FarmDetails = () => {
                     <Users className="h-5 w-5 text-purple-600" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500">Total Workers</h4>
+                    <h4 className="text-sm font-medium text-gray-500">{t('totalWorkers') || 'Total Workers'}</h4>
                     <p className="font-medium">{farm.totalWorkers}</p>
                   </div>
                 </div>
@@ -266,7 +266,7 @@ const FarmDetails = () => {
                     <Activity className="h-5 w-5 text-purple-600" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500">Farm Type</h4>
+                    <h4 className="text-sm font-medium text-gray-500">{t('farmType') || 'Farm Type'}</h4>
                     <p className="font-medium">{farm.type}</p>
                   </div>
                 </div>
@@ -277,7 +277,7 @@ const FarmDetails = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500">Animals Vaccinated</h4>
+                    <h4 className="text-sm font-medium text-gray-500">{t('animalsVaccinated') || 'Animals Vaccinated'}</h4>
                     <p className="font-medium">{farm.animalsVaccinated ? 'Yes' : 'No'}</p>
                   </div>
                 </div>
@@ -288,7 +288,7 @@ const FarmDetails = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500">Farm Capacity</h4>
+                    <h4 className="text-sm font-medium text-gray-500">{t('farmCapacity') || 'Farm Capacity'}</h4>
                     <p className="font-medium">{farm.capacity} birds</p>
                   </div>
                 </div>
@@ -297,7 +297,7 @@ const FarmDetails = () => {
 
             {/* Facilities */}
             <section className="bg-white rounded-xl shadow-sm p-6 border">
-              <h3 className="text-lg font-semibold mb-4">Facilities</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('facilities') || 'Facilities'}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {farm.facilities.map((facility, index) => (
                   <div key={index} className="flex items-start">
@@ -312,7 +312,7 @@ const FarmDetails = () => {
 
             {/* Farm Photos */}
             <section className="bg-white rounded-xl shadow-sm p-6 border">
-              <h3 className="text-lg font-semibold mb-4">Farm Photos</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('farmPhotos') || 'Farm Photos'}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {farm.photos.map((photo, index) => (
                   <div key={index} className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
@@ -329,7 +329,7 @@ const FarmDetails = () => {
             {/* Certifications */}
             {farm.certifications.length > 0 && (
               <section className="bg-white rounded-xl shadow-sm p-6 border">
-                <h3 className="text-lg font-semibold mb-4">Certifications</h3>
+                <h3 className="text-lg font-semibold mb-4">{t('certifications') || 'Certifications'}</h3>
                 <div className="flex flex-wrap gap-2">
                   {farm.certifications.map((cert, index) => (
                     <span key={index} className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full">
@@ -345,7 +345,7 @@ const FarmDetails = () => {
           <div className="space-y-6">
             {/* Contact Information */}
             <section className="bg-white rounded-xl shadow-sm p-6 border">
-              <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('contactInfo') || 'Contact Information'}</h3>
               <div className="space-y-4">
                 <div className="flex items-center">
                   <div className="bg-gray-100 p-2 rounded-lg mr-3">
@@ -381,7 +381,7 @@ const FarmDetails = () => {
 
             {/* Farm Location */}
             <section className="bg-white rounded-xl shadow-sm p-6 border">
-              <h3 className="text-lg font-semibold mb-4">Location</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('location') || 'Location'}</h3>
               <div className="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg overflow-hidden">
                 <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">
                   <MapPin className="h-12 w-12" />

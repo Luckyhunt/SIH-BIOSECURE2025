@@ -80,7 +80,7 @@ const MyFarms = () => {
                     className="px-3 py-2 rounded-md border text-gray-700 hover:bg-gray-50"
                     onClick={() => navigate(`/farms/${farm.id}`)}
                   >
-                    View Details
+                    Manage Farm
                   </button>
                 </div>
               </div>

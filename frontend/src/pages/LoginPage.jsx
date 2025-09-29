@@ -67,8 +67,8 @@ if (role === 'admin' && adminType === 'government') {
       localStorage.setItem('authToken', 'mock-farmer-token');
       localStorage.setItem('userRole', 'farmer');
       localStorage.setItem('userName', formData.username || 'Farmer');
-      // Force a full page reload to ensure all context is reset
-      window.location.href = '/farmer/dashboard';
+      // Navigate to the main farmer dashboard with overview features
+      navigate('/dashboard/farmer', { replace: true });
       return;
     } else if (role === 'visitor') {
       localStorage.setItem('authToken', 'mock-visitor-token');
