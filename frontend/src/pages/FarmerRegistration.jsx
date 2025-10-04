@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Upload } from 'lucide-react';
-import LanguageSelector from '../components/LanguageSelector';
+import LanguageSelector from '../components/LanguageSelector'; // Assuming this component exists
 
 const FarmerRegistration = () => {
   const navigate = useNavigate();
@@ -10,11 +10,13 @@ const FarmerRegistration = () => {
   const [formData, setFormData] = useState({
     farmerName: '',
     mobileNumber: '',
-    preferredLanguage: 'en',
+    // Initialize with a default language
+    preferredLanguage: 'en', 
     govId: '',
     photo: null,
   });
 
+  // This list defines the languages available and is passed to the LanguageSelector
   const availableLanguages = [
     { code: 'en', name: 'English' },
     { code: 'hi', name: 'हिंदी' },
@@ -29,6 +31,15 @@ const FarmerRegistration = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  // Handler to update the language state when the custom selector is used
+  const handleLanguageChange = (newLangCode) => {
+    setFormData(prev => ({
+      ...prev,
+      preferredLanguage: newLangCode,
+    }));
+    console.log('Preferred Language updated to:', newLangCode);
   };
 
   const handlePhotoChange = (e) => {
@@ -53,8 +64,8 @@ const FarmerRegistration = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
-    // Here you would typically send the data to your backend
-    alert('Registration successful!');
+    // NOTE: Replace alert with a custom modal in production apps
+    alert('Registration successful! Language submitted was: ' + formData.preferredLanguage);
     navigate(-1); // Go back to previous page
   };
 
@@ -67,55 +78,45 @@ const FarmerRegistration = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Language Selector in Top Right */}
+    <div className="min-h-screen bg-gray-50">
+      
+      {/* Language Selector in Top Right (Now properly connected to state) */}
       <LanguageSelector 
         variant="compact" 
         position="top-right"
         className="bg-white/90 border-gray-200 text-gray-700 hover:bg-white"
+        currentLanguage={formData.preferredLanguage}
+        onLanguageChange={handleLanguageChange}
+        availableLanguages={availableLanguages}
       />
       
       {/* Header */}
-      <header className="bg-green-600 text-white">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="bg-green-600 text-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(-1)}
-              className="p-2 rounded-lg bg-white/10 hover:bg-white/20"
+              className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
               aria-label="Back"
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
-            <h1 className="text-lg font-semibold">Farmer Registration</h1>
+            <h1 className="text-lg sm:text-xl font-semibold">Farmer Registration</h1>
           </div>
         </div>
       </header>
 
-      <div className="flex-1 max-w-2xl mx-auto p-6">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <form onSubmit={handleSubmit}>
-            {/* Language Selector */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Preferred Language
-              </label>
-              <select
-                name="preferredLanguage"
-                value={formData.preferredLanguage}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {availableLanguages.map((lang) => (
-                  <option key={lang.code} value={lang.code}>
-                    {lang.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+      {/* Main Content Area */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Form Container (Improved mobile padding: p-6 instead of p-4) */}
+        <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-2xl p-6 sm:p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            
+            {/* The old form-based language select was removed here */}
 
             {/* Farmer Name */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Farmer Name
               </label>
               <input
@@ -123,14 +124,14 @@ const FarmerRegistration = () => {
                 name="farmerName"
                 value={formData.farmerName}
                 onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150"
                 required
               />
             </div>
 
             {/* Mobile Number */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Mobile Number
               </label>
               <input
@@ -139,14 +140,15 @@ const FarmerRegistration = () => {
                 value={formData.mobileNumber}
                 onChange={handleInputChange}
                 pattern="[0-9]{10}"
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                maxLength="10"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150"
                 required
               />
             </div>
 
             {/* Government ID */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Aadhaar / Gov ID
               </label>
               <input
@@ -154,14 +156,14 @@ const FarmerRegistration = () => {
                 name="govId"
                 value={formData.govId}
                 onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150"
                 required
               />
             </div>
 
             {/* Photo Upload */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Upload Photo
               </label>
               <input
@@ -172,49 +174,46 @@ const FarmerRegistration = () => {
                 className="hidden"
                 required
               />
-              <div className="flex items-center justify-center w-full">
-                <button
-                  type="button"
-                  onClick={triggerFileInput}
-                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 transition-colors"
-                >
-                  {photoPreview ? (
-                    <img
-                      src={photoPreview}
-                      alt="Preview"
-                      className="h-28 w-28 object-cover rounded-md"
-                    />
-                  ) : (
-                    <>
-                      <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                      <p className="text-sm text-gray-500">
-                        Click to upload photo
-                      </p>
-                    </>
-                  )}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={triggerFileInput}
+                className="w-full h-40 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 bg-gray-50 hover:bg-white transition-colors flex flex-col items-center justify-center relative"
+              >
+                {photoPreview ? (
+                  <img
+                    src={photoPreview}
+                    alt="Preview"
+                    className="h-full w-full object-cover rounded-lg p-1"
+                  />
+                ) : (
+                  <>
+                    <Upload className="w-8 h-8 text-green-500 mb-2" />
+                    <p className="text-sm text-gray-600 font-semibold">Click to upload photo</p>
+                    <p className="text-xs text-gray-500 mt-0.5">JPG or PNG (Max 5MB)</p>
+                  </>
+                )}
+              </button>
             </div>
 
-            {/* Buttons */}
-            <div className="flex justify-end space-x-3 mt-8">
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shadow-sm"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors shadow-md"
               >
-                Submit
+                Submit Registration
               </button>
             </div>
           </form>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

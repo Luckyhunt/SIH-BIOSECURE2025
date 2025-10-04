@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom'
 import { Shield, UserCheck, Eye, ChevronLeft } from 'lucide-react'
 import LanguageSelector from '../components/LanguageSelector'
 import AdminTypeSelector from '../components/AdminTypeSelector'
+import { useLanguage } from '../contexts/LanguageContext'
 
 const LandingPage = () => {
   const navigate = useNavigate()
+  const { t } = useLanguage()
   const [selectedRole, setSelectedRole] = useState(null)
 
   const roles = [
@@ -15,24 +17,24 @@ const LandingPage = () => {
       icon: Shield,
       color: 'bg-blue-500',
       hoverColor: 'hover:bg-blue-600',
-      titleKey: 'Administrator',
-      descKey: 'Manage farms, approvals & reports'
+      titleKey: 'admin',
+      descKey: 'adminDesc'
     },
     {
       id: 'farmer',
       icon: UserCheck,
       color: 'bg-green-500',
       hoverColor: 'hover:bg-green-600',
-      titleKey: 'Farmer',
-      descKey: 'Tasks, alerts & training modules'
+      titleKey: 'farmer',
+      descKey: 'farmerDesc'
     },
     {
       id: 'visitor',
       icon: Eye,
       color: 'bg-purple-500',
       hoverColor: 'hover:bg-purple-600',
-      titleKey: 'Visitor',
-      descKey: 'Learn about farm management'
+      titleKey: 'visitor',
+      descKey: 'visitorDesc'
     }
   ]
 
@@ -69,10 +71,10 @@ const LandingPage = () => {
             className='text-center'
           >
             <h1 className='text-4xl md:text-6xl font-bold text-gray-900 mb-6'>
-              Digital Farm & Biosecurity Management Platform
+              {t('title')}
             </h1>
             <p className='text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto'>
-              Empowering Farmers with Smart Tools
+              {t('subtitle')}
             </p>
           </motion.div>
 
@@ -83,10 +85,10 @@ const LandingPage = () => {
             className='text-center mb-8'
           >
             <h2 className='text-2xl font-semibold text-gray-800 mb-2'>
-              Select your role to continue
+              {t('selectRole')}
             </h2>
             <p className='text-gray-600'>
-              Welcome back!
+              {t('welcome')}
             </p>
           </motion.div>
 
@@ -112,10 +114,10 @@ const LandingPage = () => {
                           <IconComponent className='h-16 w-16' />
                           <div className='text-center'>
                             <h3 className='text-xl font-semibold mb-2'>
-                              {role.titleKey}
+                              {t(role.titleKey)}
                             </h3>
                             <p className='text-sm opacity-90'>
-                              {role.descKey}
+                              {t(role.descKey)}
                             </p>
                           </div>
                         </div>

@@ -133,13 +133,27 @@ const FarmApprovalsPage = () => {
                   {activeTab === 'pending' && (
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
                       <div className="w-2 h-2 bg-yellow-400 rounded-full mr-2"></div>
-                      statusPending
+                      Pending Review
+                    </span>
+                  )}
+                  
+                  {activeTab === 'approved' && (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200">
+                      <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                      Approved
+                    </span>
+                  )}
+                  
+                  {activeTab === 'rejected' && (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 border border-red-200">
+                      <div className="w-2 h-2 bg-red-400 rounded-full mr-2"></div>
+                      Rejected
                     </span>
                   )}
                   
                   <button className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg border border-gray-300">
                     <Eye className="w-4 h-4 mr-1" />
-                    viewApplication
+                    View Application
                   </button>
                   
                   {activeTab === 'pending' && (

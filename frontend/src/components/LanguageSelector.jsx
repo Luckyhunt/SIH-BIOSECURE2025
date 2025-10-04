@@ -1,22 +1,11 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { ChevronDown, Globe } from 'lucide-react'
+import { useLanguage } from '../contexts/LanguageContext'
 
 const LanguageSelector = ({ variant = 'default', position = 'fixed', className = '' }) => {
+  const { language: currentLanguage, setLanguage } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
-  
-  // Helper to get initial language from URL hash (improved logic for clarity)
-  const getInitialLanguage = useCallback(() => {
-    // Check for the translation hash (e.g., #googtrans(en|hi) or #googtrans(/en/hi))
-    const hashMatch = window.location.hash.match(/googtrans\(.{2}\|(\w{2})\)/) || 
-                     window.location.hash.match(/googtrans\(\/\w{2}\/(\w{2})\)/)
-    const lang = hashMatch ? hashMatch[1] : 'en'
-    return lang === 'und' || lang === 'en|en' ? 'en' : lang
-  }, [])
-
-  const [currentLanguage, setCurrentLanguage] = useState(getInitialLanguage)
-  const [isTranslateReady, setIsTranslateReady] = useState(false)
   const [isTranslating, setIsTranslating] = useState(false)
-  const [googleTranslateCombo, setGoogleTranslateCombo] = useState(null)
   const buttonRef = useRef(null)
   const dropdownRef = useRef(null)
 
@@ -28,13 +17,41 @@ const LanguageSelector = ({ variant = 'default', position = 'fixed', className =
     { code: 'ta', name: 'Tamil', nativeName: 'தமிழ்' }
   ]
 
-  // Helper to find the language object
-  const getLanguageByCode = useCallback((code) => languages.find((l) => l.code === code), [languages])
-  
+  const getCurrentLanguageName = () => {
+    const lang = languages.find(l => l.code === currentLanguage)
+    return lang ? lang.nativeName : 'English'
+  }
+
+  // Helper to get language from URL hash or localStorage
+  const getInitialLanguage = useCallback(() => {
+    const savedLanguage = localStorage.getItem('selectedLanguage')
+    if (savedLanguage && ['en', 'hi', 'mr', 'gu', 'ta'].includes(savedLanguage)) {
+      return savedLanguage
+    }
+    
+    const hashMatch = window.location.hash.match(/googtrans\(.{2}\|(\w{2})\)/) || 
+                     window.location.hash.match(/googtrans\(\/\w{2}\/(\w{2})\)/)
+    const lang = hashMatch ? hashMatch[1] : 'en'
+    return lang === 'und' || lang === 'en|en' ? 'en' : lang
+  }, [])
+  // Update current language when URL hash changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      const newLang = getInitialLanguage()
+      if (newLang !== currentLanguage) {
+        setLanguage(newLang)
+      }
+    }
+    
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [getInitialLanguage, currentLanguage, setLanguage])
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && buttonRef.current && !buttonRef.current.contains(event.target)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && 
+          buttonRef.current && !buttonRef.current.contains(event.target)) {
         setIsOpen(false)
       }
     }
@@ -42,264 +59,146 @@ const LanguageSelector = ({ variant = 'default', position = 'fixed', className =
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  // Detect Google Translate combo element
+  // Initialize Google Translate
   useEffect(() => {
-    // Stop checking if translation isn't ready or if we've already found the combo
-    if (!isTranslateReady || googleTranslateCombo) return
+    if (!document.getElementById('google-translate-script')) {
+      const script = document.createElement('script')
+      script.id = 'google-translate-script'
+      script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'
+      script.async = true
+      document.body.appendChild(script)
+    }
 
-    let interval
-    const checkCombo = () => {
-      // Find the SELECT element created by the HORIZONTAL layout
-      const translateElementDiv = document.getElementById('google_translate_element')
-      const combo = translateElementDiv ? translateElementDiv.querySelector(".goog-te-combo") : null
-
-      if (combo && combo.options && combo.options.length > 1) {
-        console.log("✅ Found and ready Google Translate dropdown with", combo.options.length, "options")
-        setGoogleTranslateCombo(combo)
-        clearInterval(interval)
+    window.googleTranslateElementInit = () => {
+      if (window.google?.translate?.TranslateElement) {
+        new window.google.translate.TranslateElement({
+          pageLanguage: 'en',
+          includedLanguages: 'en,hi,mr,gu,ta',
+          layout: window.google.translate.TranslateElement.InlineLayout.HORIZONTAL,
+          autoDisplay: false,
+          multilanguagePage: true
+        }, 'google_translate_element')
         
-        // Synchronize the component's state with the actual translated state
-        const initialLang = getInitialLanguage()
-        if (combo.value !== initialLang) {
-          console.log(`🔄 Syncing Google Translate combo to initial language: ${initialLang}`)
-          combo.value = initialLang
-          combo.dispatchEvent(new Event('change', { bubbles: true }))
+        console.log('✅ Google Translate initialized successfully')
+      }
+    }
+
+    // Add styles to hide Google Translate UI
+    if (!document.getElementById('google-translate-styles')) {
+      const style = document.createElement('style')
+      style.id = 'google-translate-styles'
+      style.textContent = `
+        .goog-te-banner-frame.skiptranslate { display: none !important; }
+        .goog-te-gadget { display: none !important; }
+        body { top: 0 !important; position: static !important; }
+        #google_translate_element {
+          position: absolute !important;
+          top: -9999px !important;
+          left: -9999px !important;
+          visibility: hidden !important;
+          width: 0 !important;
+          height: 0 !important;
+          overflow: hidden !important;
         }
-        setCurrentLanguage(initialLang)
-      } 
+        .goog-te-combo { display: none !important; }
+        body.goog-te-hl { top: 0 !important; }
+        .skiptranslate { display: none !important; }
+      `
+      document.head.appendChild(style)
     }
-
-    // Check every 500ms for up to 10 seconds
-    interval = setInterval(checkCombo, 500)
-    const timeout = setTimeout(() => {
-      clearInterval(interval)
-      if (!googleTranslateCombo) {
-        console.log('⚠️ Google Translate combo not ready after 10 seconds. Check Layout setting (should be HORIZONTAL).')
-      }
-    }, 10000)
-
-    return () => {
-      clearInterval(interval)
-      clearTimeout(timeout)
-    }
-  }, [isTranslateReady, getInitialLanguage, googleTranslateCombo])
-
-  // Load Google Translate script and manage styles
-  useEffect(() => {
-    const cleanGoogleTranslateState = () => {
-      // Clear cookies and local storage to prevent auto-translation
-      document.cookie.split(';').filter(cookie => cookie.trim().toLowerCase().includes('googtrans')).forEach(cookie => {
-        const cookieName = cookie.split('=')[0].trim()
-        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
-      })
-      try { localStorage.removeItem('googtrans') } catch (e) {}
-    }
-
-    cleanGoogleTranslateState()
-    
-    // Initial page load hash check (removed forced reload to improve UX)
-    if (window.location.hash.includes('googtrans')) {
-      console.log('⚠️ Detected automatic Google Translate hash, allowing it to proceed for initial display.')
-    }
-    
-    const initializeGoogleTranslate = () => {
-      if (!document.getElementById('google-translate-script')) {
-        const script = document.createElement('script')
-        script.id = 'google-translate-script'
-        script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'
-        script.async = true
-        script.onload = () => console.log('Google Translate script loaded')
-        script.onerror = () => console.error('Failed to load Google Translate script')
-        document.body.appendChild(script)
-      }
-
-      window.googleTranslateElementInit = () => {
-        try {
-          if (!window.google?.translate?.TranslateElement) {
-            console.error('❌ Google Translate API not properly loaded!')
-            return
-          }
-          
-          // ✨ CRITICAL FIX: Use InlineLayout.HORIZONTAL to force the <select> element (.goog-te-combo)
-          const translateElement = new window.google.translate.TranslateElement(
-            {
-              pageLanguage: 'en',
-              includedLanguages: languages.map(l => l.code).filter(c => c !== 'en').join(','),
-              layout: window.google.translate.TranslateElement.InlineLayout.HORIZONTAL, // <-- THE FIX IS HERE
-              autoDisplay: false, 
-              multilanguagePage: true,
-              gaTrack: false,
-              gaId: null
-            },
-            'google_translate_element'
-          )
-          
-          console.log('✅ Google Translate initialized with HORIZONTAL layout (select element is now created).')
-          setIsTranslateReady(true)
-          
-        } catch (error) {
-          console.error('❌ Error initializing Google Translate:', error)
-        }
-      }
-
-      // Hidden UI styles (ensure they remain effective)
-      const styleId = 'google-translate-styles'
-      if (!document.getElementById(styleId)) {
-        const style = document.createElement('style')
-        style.id = styleId
-        style.textContent = `
-          .goog-te-banner-frame.skiptranslate, 
-          .goog-te-gadget { display: none !important; visibility: hidden !important; }
-          body { top: 0 !important; }
-          .skiptranslate, #goog-gt-tt, .goog-tooltip, .goog-tooltip:hover { display: none !important; visibility: hidden !important; }
-          #google_translate_element {
-            position: absolute !important;
-            top: -9999px !important;
-            left: -9999px !important;
-            height: 1px !important;
-            width: 1px !important;
-            overflow: hidden !important;
-            clip: rect(0, 0, 0, 0) !important;
-          }
-          /* Fix nested font tags and text rendering issues in language selector */
-          .language-selector-button span {
-            font-family: inherit !important;
-          }
-          .language-selector-button span font,
-          .language-selector-button span font font {
-            font-family: inherit !important;
-            font-size: inherit !important;
-            font-weight: inherit !important;
-            color: inherit !important;
-            all: unset;
-            display: inline;
-          }
-          /* Prevent Google Translate from modifying our custom elements */
-          .language-selector-button * {
-            font-family: inherit !important;
-          }
-        `
-        document.head.appendChild(style)
-      }
-    }
-
-    initializeGoogleTranslate()
-    
-    return () => {
-      delete window.googleTranslateElementInit
-    }
-  }, [languages])
+  }, [])
 
   const translatePage = (languageCode) => {
-    console.log('🌍 User initiated translation to:', languageCode)
-
-    setCurrentLanguage(languageCode)
+    console.log('🌍 Translating to:', languageCode)
+    
+    setLanguage(languageCode)
+    localStorage.setItem('selectedLanguage', languageCode)
     setIsOpen(false)
     setIsTranslating(true)
-    buttonRef.current?.focus()
 
-    const isReset = languageCode === 'en'
-
-    // --- Method 1: Preferred (Use Combo Element) ---
-    if (googleTranslateCombo) {
-      console.log(`✅ Using detected Google Translate combo element to set: ${languageCode}`)
-
-      // Find the option value (e.g., 'hi' or 'en|hi')
-      const targetOption = [...googleTranslateCombo.options].find(option => 
-        option.value === languageCode || 
-        option.value.endsWith(`|${languageCode}`)
-      )
-
-      if (targetOption) {
-        googleTranslateCombo.value = targetOption.value
-        
-        // Trigger necessary events
-        googleTranslateCombo.dispatchEvent(new Event('change', { bubbles: true }))
-        googleTranslateCombo.dispatchEvent(new Event('input', { bubbles: true }))
-        if (typeof googleTranslateCombo.onchange === 'function') {
-            googleTranslateCombo.onchange.call(googleTranslateCombo)
-        }
-        
-        // For reset, ensure hash is cleared after translation logic runs
-        if (isReset && window.location.hash.includes('googtrans')) {
-             setTimeout(() => window.location.hash = '', 50)
-        }
-
-        setTimeout(() => setIsTranslating(false), 1000)
-        return
-      } else {
-        console.warn('⚠️ Target language option not found in combo. Falling back to hash.')
-      }
-    }
-
-    // --- Method 2: Fallback (Hash-based with reload) ---
-    console.log('⚠️ Falling back to hash reload for:', languageCode)
-    
-    if (isReset) {
+    if (languageCode === 'en') {
+      // Reset to English
+      localStorage.removeItem('googtrans')
       window.location.hash = ''
-      setTimeout(() => window.location.reload(), 300)
+      setTimeout(() => {
+        window.location.reload()
+      }, 100)
       return
     }
 
-    const currentUrl = window.location.href.split('#')[0]
-    const newHash = `#googtrans(/en/${languageCode})` 
-    const newUrl = `${currentUrl}${newHash}`
+    // Use Google Translate for other languages
+    const translateDiv = document.getElementById('google_translate_element')
+    const combo = translateDiv?.querySelector('.goog-te-combo')
     
-    if (window.location.hash !== newHash) {
-        window.location.href = newUrl
-    } else {
-        setIsTranslating(false)
+    if (combo && combo.options && combo.options.length > 1) {
+      console.log('✅ Using Google Translate combo element')
+      
+      const targetOption = [...combo.options].find(option => {
+        const value = option.value.toLowerCase()
+        return value === languageCode || value.endsWith(`|${languageCode}`) || value.endsWith(`/${languageCode}`)
+      })
+      
+      if (targetOption) {
+        combo.value = targetOption.value
+        const event = new Event('change', { bubbles: true, cancelable: true })
+        combo.dispatchEvent(event)
+        
+        setTimeout(() => {
+          setIsTranslating(false)
+        }, 1500)
+        return
+      }
     }
+    
+    // Fallback: hash-based translation
+    console.log('⚠️ Using hash-based translation fallback')
+    const currentUrl = window.location.href.split('#')[0]
+    const newHash = `#googtrans(en|${languageCode})`
+    window.location.hash = newHash
+    
+    setTimeout(() => {
+      if (window.location.hash === newHash) {
+        window.location.reload()
+      }
+      setIsTranslating(false)
+    }, 2000)
   }
 
-  const getCurrentLanguageName = () => {
-    const lang = getLanguageByCode(currentLanguage)
-    return lang ? lang.nativeName : 'English'
-  }
-
-  // Get container classes based on variant and position
   const getContainerClasses = () => {
-    if (position === 'inline') return 'relative'
-    if (position === 'top-right') return 'fixed top-2 right-2 z-50'
-    return 'fixed top-4 right-4 z-50' 
+    if (position === 'inline') return 'relative z-50'
+    if (position === 'top-right') return 'fixed top-4 right-4 z-[9999]' 
+    return 'fixed top-4 right-4 z-[9999]'
   }
   
-  // Get button classes based on variant
   const getButtonClasses = () => {
-    const baseClasses = 'flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors duration-200'
-    if (variant === 'compact') return `${baseClasses} px-3 py-1.5 text-sm ${className || 'bg-white/10 border border-white/20 text-white hover:bg-white/20'}`
-    return `${baseClasses} bg-white border border-gray-300 ${className || 'hover:bg-gray-50'}`
-  }
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
-      setIsOpen(false)
-      buttonRef.current?.focus()
+    const baseClasses = 'flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-200'
+    const defaultCompactClasses = 'bg-white/90 border border-gray-200 text-gray-700 hover:bg-white'
+    
+    if (variant === 'compact') {
+      return `${baseClasses} px-3 py-1.5 text-sm ${className || defaultCompactClasses}`
     }
+    return `${baseClasses} bg-white border border-gray-300 ${className || 'hover:bg-gray-50'}`
   }
 
   return (
     <>
-      {/* Hidden Google Translate container - positioned off-screen but functional */}
+      {/* Hidden Google Translate element */}
       <div id="google_translate_element" style={{
         position: 'absolute',
         top: '-9999px',
         left: '-9999px',
-        width: '1px',
-        height: '1px',
-        overflow: 'hidden',
-        clip: 'rect(0, 0, 0, 0)'
+        visibility: 'hidden',
+        width: '0',
+        height: '0',
+        overflow: 'hidden'
       }}></div>
 
-      <div className={getContainerClasses()} role="navigation" aria-label="Language selector">
-        {/* Emergency Reset Button (only show if not English) */}
+      <div className={getContainerClasses()}>
+        {/* Reset button for non-English languages */}
         {currentLanguage !== 'en' && position !== 'inline' && (
           <button
-            onClick={() => {
-              window.location.hash = ''
-              window.location.reload()
-            }}
-            className="mb-2 px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 transition-colors"
+            onClick={() => translatePage('en')}
+            className="mb-2 px-3 py-1 bg-red-500 text-white text-xs rounded-full hover:bg-red-600 transition-colors shadow-md"
             title="Reset to English"
           >
             Reset to English
@@ -310,39 +209,25 @@ const LanguageSelector = ({ variant = 'default', position = 'fixed', className =
           <button
             ref={buttonRef}
             onClick={() => setIsOpen(!isOpen)}
-            onKeyDown={handleKeyDown}
-            aria-haspopup="listbox"
-            aria-expanded={isOpen}
-            aria-label={`Change language, current: ${getCurrentLanguageName()}`}
             className={`language-selector-button ${getButtonClasses()}`}
-            disabled={!isTranslateReady && currentLanguage === 'en'} 
+            disabled={isTranslating}
           >
-            <Globe className={`${variant === 'compact' ? 'w-4 h-4' : 'w-4 h-4'} ${variant === 'compact' && className?.includes('text-white') ? 'text-white' : 'text-gray-600'}`} aria-hidden="true" />
-            <span className={`${variant === 'compact' ? 'text-sm' : 'text-sm'} font-medium ${variant === 'compact' && className?.includes('text-white') ? 'text-white' : 'text-gray-700'}`}>
+            <Globe className="w-4 h-4 text-green-600" />
+            <span className="text-sm font-medium text-gray-800">
               {isTranslating ? 'Translating...' : getCurrentLanguageName()}
             </span>
-            <ChevronDown
-              className={`w-4 h-4 ${variant === 'compact' && className?.includes('text-white') ? 'text-white' : 'text-gray-600'} transition-transform duration-200 ${
-                isOpen ? 'rotate-180' : ''
-              }`}
-              aria-hidden="true"
-            />
+            <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {isOpen && (
-            <ul
-              role="listbox"
-              tabIndex={-1}
-              onKeyDown={handleKeyDown}
-              className="absolute right-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto focus:outline-none"
-            >
+            <ul className="absolute right-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-[10000] max-h-60 overflow-y-auto">
               {languages.map((language) => (
-                <li key={language.code} role="option" aria-selected={currentLanguage === language.code}>
+                <li key={language.code}>
                   <button
                     onClick={() => translatePage(language.code)}
-                    className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 focus:bg-gray-50 focus:outline-none transition-colors duration-150 ${
+                    className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-colors ${
                       currentLanguage === language.code
-                        ? 'bg-green-50 text-green-700 font-medium'
+                        ? 'bg-green-50 text-green-700 font-semibold'
                         : 'text-gray-700'
                     } first:rounded-t-lg last:rounded-b-lg`}
                   >
@@ -360,7 +245,6 @@ const LanguageSelector = ({ variant = 'default', position = 'fixed', className =
             <div
               className="fixed inset-0 z-40"
               onClick={() => setIsOpen(false)}
-              aria-hidden="true"
             />
           )}
         </div>

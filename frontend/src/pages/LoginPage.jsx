@@ -249,7 +249,7 @@ if (role === 'admin' && adminType === 'government') {
     },
     veterinarian: {
       title: 'Veterinarian Login',
-      bgColor: 'bg-indigo-500',
+      bgColor: 'bg-orange-500',
       icon: '🐾',
       subtitle: 'Access veterinary services'
     },
