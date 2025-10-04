@@ -73,8 +73,19 @@ const LanguageSelector = ({ variant = 'default', position = 'fixed', className =
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  // Initialize Google Translate with improved hash management
+  // Initialize Google Translate with better control over initial state
   useEffect(() => {
+    // First, check what language we should be in
+    const savedLang = localStorage.getItem('selectedLanguage') || 'en'
+    
+    if (savedLang === 'en') {
+      // If English is selected, ensure clean state immediately
+      console.log('🆙 Initial state: English selected, ensuring clean state')
+      ensureDefaultEnglishState()
+      return // Don't initialize Google Translate for English
+    }
+    
+    // Only initialize Google Translate if we need non-English languages
     if (!document.getElementById('google-translate-script')) {
       const script = document.createElement('script')
       script.id = 'google-translate-script'
@@ -87,7 +98,7 @@ const LanguageSelector = ({ variant = 'default', position = 'fixed', className =
       if (window.google?.translate?.TranslateElement) {
         new window.google.translate.TranslateElement({
           pageLanguage: 'en',
-          includedLanguages: 'en,hi,mr,gu,ta',
+          includedLanguages: 'hi,mr,gu,ta', // Excluded 'en' since we handle it separately
           layout: window.google.translate.TranslateElement.InlineLayout.HORIZONTAL,
           autoDisplay: false,
           multilanguagePage: true
@@ -95,13 +106,15 @@ const LanguageSelector = ({ variant = 'default', position = 'fixed', className =
         
         console.log('✅ Google Translate initialized successfully')
         
-        // Apply saved language after initialization
-        const savedLang = localStorage.getItem('selectedLanguage')
-        if (savedLang && savedLang !== 'en') {
-          setTimeout(() => {
-            applyTranslation(savedLang)
-          }, 1000)
-        }
+        // Apply saved language after initialization (only if not English)
+        setTimeout(() => {
+          if (savedLang && savedLang !== 'en') {
+            console.log('🔄 Applying saved language:', savedLang)
+            waitForGoogleTranslateReady(() => {
+              applyTranslation(savedLang)
+            })
+          }
+        }, 1500)
       }
     }
 
@@ -130,40 +143,131 @@ const LanguageSelector = ({ variant = 'default', position = 'fixed', className =
     }
   }, [])
 
-  // Separate function for applying translation without affecting browser history
-  const applyTranslation = (languageCode) => {
-    if (languageCode === 'en') {
-      // For English, clear any existing translation
+  // Function to ensure we're in default English state (no Google Translate)
+  const ensureDefaultEnglishState = () => {
+    console.log('🆙 Ensuring default English state - no Google Translate')
+    
+    // Remove any Google Translate artifacts immediately
+    document.body.classList.remove('goog-te-hl')
+    document.body.removeAttribute('data-goog-te-hl')
+    document.body.removeAttribute('style') // Remove any inline styles GT adds
+    
+    // Remove translation attributes from all elements
+    const translatedElements = document.querySelectorAll('[data-goog-te-hl]')
+    translatedElements.forEach(el => {
+      el.removeAttribute('data-goog-te-hl')
+      el.classList.remove('goog-te-hl')
+    })
+    
+    // Remove any Google Translate injected elements
+    const gtElements = document.querySelectorAll('.goog-te-spinner, .goog-te-balloon, .goog-te-ftab')
+    gtElements.forEach(el => el.remove())
+    
+    // Clear any hash
+    if (window.location.hash.includes('googtrans')) {
+      const url = window.location.href.split('#')[0]
+      window.history.replaceState(null, '', url)
+    }
+    
+    // Reset any Google Translate cookies
+    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+    
+    // Force a DOM cleanup
+    setTimeout(() => {
+      // Second pass cleanup
+      document.body.classList.remove('goog-te-hl')
+      const remainingElements = document.querySelectorAll('[data-goog-te-hl]')
+      remainingElements.forEach(el => {
+        el.removeAttribute('data-goog-te-hl')
+        el.classList.remove('goog-te-hl')
+      })
+    }, 100)
+    
+    console.log('✅ Default English state ensured')
+  }
+
+  // Function to wait for Google Translate to be fully ready
+  const waitForGoogleTranslateReady = (callback, maxAttempts = 10) => {
+    let attempts = 0
+    
+    const checkReady = () => {
       const translateDiv = document.getElementById('google_translate_element')
       const combo = translateDiv?.querySelector('.goog-te-combo')
-      if (combo) {
-        combo.value = ''
-        combo.dispatchEvent(new Event('change', { bubbles: true }))
+      
+      if (combo && combo.options && combo.options.length > 1) {
+        console.log('✅ Google Translate combo ready with', combo.options.length, 'options')
+        callback()
+        return
       }
-      return
+      
+      attempts++
+      if (attempts < maxAttempts) {
+        console.log('⏳ Waiting for Google Translate combo... attempt', attempts)
+        setTimeout(checkReady, 500)
+      } else {
+        console.warn('⚠️ Google Translate combo not ready after', maxAttempts, 'attempts')
+        callback() // Try anyway
+      }
+    }
+    
+    checkReady()
+  }
+
+  // Apply translation function - completely bypass Google Translate for English
+  const applyTranslation = (languageCode) => {
+    console.log('🌍 Applying translation to:', languageCode)
+    
+    if (languageCode === 'en') {
+      // For English, don't use Google Translate at all - just ensure clean state
+      console.log('🆙 Switching to default English (no Google Translate)')
+      ensureDefaultEnglishState()
+      return true
     }
 
-    // Apply translation using Google Translate combo
+    // Only use Google Translate for non-English languages
     const translateDiv = document.getElementById('google_translate_element')
     const combo = translateDiv?.querySelector('.goog-te-combo')
     
     if (combo && combo.options && combo.options.length > 1) {
+      console.log('🔍 Available options:', [...combo.options].map(opt => opt.value))
+      
       const targetOption = [...combo.options].find(option => {
         const value = option.value.toLowerCase()
-        return value === languageCode || value.endsWith(`|${languageCode}`) || value.endsWith(`/${languageCode}`)
+        return value === languageCode || 
+               value.endsWith(`|${languageCode}`) || 
+               value.endsWith(`/${languageCode}`) ||
+               value === `en|${languageCode}`
       })
       
       if (targetOption) {
+        console.log('✅ Found target option:', targetOption.value)
         combo.value = targetOption.value
-        combo.dispatchEvent(new Event('change', { bubbles: true }))
+        
+        // Trigger the change event multiple ways to ensure it works
+        const changeEvent = new Event('change', { bubbles: true, cancelable: true })
+        combo.dispatchEvent(changeEvent)
+        
+        // Also try click event
+        const clickEvent = new Event('click', { bubbles: true })
+        combo.dispatchEvent(clickEvent)
+        
+        // Force re-trigger after a small delay
+        setTimeout(() => {
+          combo.dispatchEvent(new Event('change', { bubbles: true }))
+        }, 100)
+        
         return true
+      } else {
+        console.warn('⚠️ Target option not found for language:', languageCode)
       }
+    } else {
+      console.warn('⚠️ Google Translate combo not ready or has no options')
     }
     return false
   }
 
   const translatePage = (languageCode) => {
-    console.log('🌍 Translating to:', languageCode)
+    console.log('🌍 User initiated translation to:', languageCode)
     
     // Mark this as a user-initiated change
     userInitiatedChange.current = true
@@ -175,34 +279,57 @@ const LanguageSelector = ({ variant = 'default', position = 'fixed', className =
     setIsTranslating(true)
 
     if (languageCode === 'en') {
-      // For English, clear translation without reloading
-      applyTranslation('en')
-      // Clear any hash without affecting history
-      if (window.location.hash.includes('googtrans')) {
-        const url = window.location.href.split('#')[0]
-        window.history.replaceState(null, '', url)
-      }
+      // For English, completely bypass Google Translate and show default page
+      console.log('🆙 Switching to default English (bypassing Google Translate)')
+      
+      // Clear any Google Translate state immediately
+      ensureDefaultEnglishState()
+      
+      // If there's still any translation active, force a page reload
       setTimeout(() => {
-        setIsTranslating(false)
+        if (document.body.classList.contains('goog-te-hl') || 
+            document.querySelector('[data-goog-te-hl]') ||
+            window.location.hash.includes('googtrans') ||
+            document.title.includes('વાઇટ') || // Check for any non-English text
+            document.title.includes('हिंदी') ||
+            document.title.includes('मराठी') ||
+            document.title.includes('তমিল')) {
+          console.log('🔄 Page still translated, forcing reload to ensure English')
+          window.location.reload()
+        } else {
+          console.log('✅ Successfully switched to default English')
+          setIsTranslating(false)
+        }
       }, 500)
+      
       return
     }
 
-    // Try to apply translation using combo element
-    const success = applyTranslation(languageCode)
-    
-    if (!success) {
-      // Fallback: use hash but don't let it interfere with navigation
-      console.log('⚠️ Using hash-based translation fallback')
-      const currentUrl = window.location.href.split('#')[0]
-      const newHash = `#googtrans(en|${languageCode})`
-      // Use replaceState to avoid affecting browser history
-      window.history.replaceState(null, '', `${currentUrl}${newHash}`)
-    }
-    
-    setTimeout(() => {
-      setIsTranslating(false)
-    }, 1500)
+    // For non-English languages, use Google Translate
+    console.log('🌍 Using Google Translate for:', languageCode)
+    waitForGoogleTranslateReady(() => {
+      const success = applyTranslation(languageCode)
+      
+      if (!success) {
+        // Fallback: use hash method
+        console.log('⚠️ Using hash-based translation fallback')
+        const currentUrl = window.location.href.split('#')[0]
+        const newHash = `#googtrans(en|${languageCode})`
+        window.history.replaceState(null, '', `${currentUrl}${newHash}`)
+        
+        // Force page reload as last resort
+        setTimeout(() => {
+          if (!document.body.classList.contains('goog-te-hl')) {
+            console.log('🔄 Translation not applied, forcing reload')
+            window.location.reload()
+          }
+        }, 2000)
+      }
+      
+      setTimeout(() => {
+        setIsTranslating(false)
+      }, success ? 1000 : 2500)
+    })
   }
 
   const getContainerClasses = () => {
