@@ -23,29 +23,43 @@ const LanguageSelector = ({ variant = 'default', position = 'fixed', className =
   }
 
   // Helper to get language from URL hash or localStorage
+  // Helper to get language from localStorage only (ignore hash for user-initiated selections)
   const getInitialLanguage = useCallback(() => {
     const savedLanguage = localStorage.getItem('selectedLanguage')
     if (savedLanguage && ['en', 'hi', 'mr', 'gu', 'ta'].includes(savedLanguage)) {
       return savedLanguage
     }
-    
-    const hashMatch = window.location.hash.match(/googtrans\(.{2}\|(\w{2})\)/) || 
-                     window.location.hash.match(/googtrans\(\/\w{2}\/(\w{2})\)/)
-    const lang = hashMatch ? hashMatch[1] : 'en'
-    return lang === 'und' || lang === 'en|en' ? 'en' : lang
+    return 'en' // Default to English
   }, [])
-  // Update current language when URL hash changes
+
+  // Track if language change was user-initiated
+  const userInitiatedChange = useRef(false)
+
+  // Handle hash changes more carefully - only respond to Google Translate, not browser navigation
   useEffect(() => {
     const handleHashChange = () => {
-      const newLang = getInitialLanguage()
-      if (newLang !== currentLanguage) {
-        setLanguage(newLang)
+      // Only respond to hash changes if they were not user-initiated
+      if (userInitiatedChange.current) {
+        userInitiatedChange.current = false
+        return
+      }
+      
+      // Check if this is a Google Translate hash
+      const hashMatch = window.location.hash.match(/googtrans\(.{2}\|(\w{2})\)/) || 
+                       window.location.hash.match(/googtrans\(\/\w{2}\/(\w{2})\)/)
+      
+      if (hashMatch) {
+        const lang = hashMatch[1]
+        if (lang && lang !== 'und' && lang !== currentLanguage) {
+          setLanguage(lang)
+          localStorage.setItem('selectedLanguage', lang)
+        }
       }
     }
     
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
-  }, [getInitialLanguage, currentLanguage, setLanguage])
+  }, [currentLanguage, setLanguage])
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -59,7 +73,7 @@ const LanguageSelector = ({ variant = 'default', position = 'fixed', className =
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  // Initialize Google Translate
+  // Initialize Google Translate with improved hash management
   useEffect(() => {
     if (!document.getElementById('google-translate-script')) {
       const script = document.createElement('script')
@@ -80,6 +94,14 @@ const LanguageSelector = ({ variant = 'default', position = 'fixed', className =
         }, 'google_translate_element')
         
         console.log('✅ Google Translate initialized successfully')
+        
+        // Apply saved language after initialization
+        const savedLang = localStorage.getItem('selectedLanguage')
+        if (savedLang && savedLang !== 'en') {
+          setTimeout(() => {
+            applyTranslation(savedLang)
+          }, 1000)
+        }
       }
     }
 
@@ -108,31 +130,24 @@ const LanguageSelector = ({ variant = 'default', position = 'fixed', className =
     }
   }, [])
 
-  const translatePage = (languageCode) => {
-    console.log('🌍 Translating to:', languageCode)
-    
-    setLanguage(languageCode)
-    localStorage.setItem('selectedLanguage', languageCode)
-    setIsOpen(false)
-    setIsTranslating(true)
-
+  // Separate function for applying translation without affecting browser history
+  const applyTranslation = (languageCode) => {
     if (languageCode === 'en') {
-      // Reset to English
-      localStorage.removeItem('googtrans')
-      window.location.hash = ''
-      setTimeout(() => {
-        window.location.reload()
-      }, 100)
+      // For English, clear any existing translation
+      const translateDiv = document.getElementById('google_translate_element')
+      const combo = translateDiv?.querySelector('.goog-te-combo')
+      if (combo) {
+        combo.value = ''
+        combo.dispatchEvent(new Event('change', { bubbles: true }))
+      }
       return
     }
 
-    // Use Google Translate for other languages
+    // Apply translation using Google Translate combo
     const translateDiv = document.getElementById('google_translate_element')
     const combo = translateDiv?.querySelector('.goog-te-combo')
     
     if (combo && combo.options && combo.options.length > 1) {
-      console.log('✅ Using Google Translate combo element')
-      
       const targetOption = [...combo.options].find(option => {
         const value = option.value.toLowerCase()
         return value === languageCode || value.endsWith(`|${languageCode}`) || value.endsWith(`/${languageCode}`)
@@ -140,28 +155,54 @@ const LanguageSelector = ({ variant = 'default', position = 'fixed', className =
       
       if (targetOption) {
         combo.value = targetOption.value
-        const event = new Event('change', { bubbles: true, cancelable: true })
-        combo.dispatchEvent(event)
-        
-        setTimeout(() => {
-          setIsTranslating(false)
-        }, 1500)
-        return
+        combo.dispatchEvent(new Event('change', { bubbles: true }))
+        return true
       }
     }
+    return false
+  }
+
+  const translatePage = (languageCode) => {
+    console.log('🌍 Translating to:', languageCode)
     
-    // Fallback: hash-based translation
-    console.log('⚠️ Using hash-based translation fallback')
-    const currentUrl = window.location.href.split('#')[0]
-    const newHash = `#googtrans(en|${languageCode})`
-    window.location.hash = newHash
+    // Mark this as a user-initiated change
+    userInitiatedChange.current = true
+    
+    // Update React state and localStorage immediately
+    setLanguage(languageCode)
+    localStorage.setItem('selectedLanguage', languageCode)
+    setIsOpen(false)
+    setIsTranslating(true)
+
+    if (languageCode === 'en') {
+      // For English, clear translation without reloading
+      applyTranslation('en')
+      // Clear any hash without affecting history
+      if (window.location.hash.includes('googtrans')) {
+        const url = window.location.href.split('#')[0]
+        window.history.replaceState(null, '', url)
+      }
+      setTimeout(() => {
+        setIsTranslating(false)
+      }, 500)
+      return
+    }
+
+    // Try to apply translation using combo element
+    const success = applyTranslation(languageCode)
+    
+    if (!success) {
+      // Fallback: use hash but don't let it interfere with navigation
+      console.log('⚠️ Using hash-based translation fallback')
+      const currentUrl = window.location.href.split('#')[0]
+      const newHash = `#googtrans(en|${languageCode})`
+      // Use replaceState to avoid affecting browser history
+      window.history.replaceState(null, '', `${currentUrl}${newHash}`)
+    }
     
     setTimeout(() => {
-      if (window.location.hash === newHash) {
-        window.location.reload()
-      }
       setIsTranslating(false)
-    }, 2000)
+    }, 1500)
   }
 
   const getContainerClasses = () => {
